@@ -104,7 +104,14 @@ npm run preview
 
 **Environment:** Copy `.env.example` → `.env.local` for local dev. Never commit real values.
 
-**Deploy:** Commit and `git push` to publish source. GitHub Pages hosting is configured in the repo settings on GitHub.
+**Deploy (GitHub Pages — branch):** Settings → Pages → **Deploy from branch**. GitHub serves static files only — it does not run `npm run build`. After code changes, build locally and publish the output:
+
+```powershell
+npm run build
+npx gh-pages -d dist
+```
+
+Set Pages source to the **`gh-pages`** branch (created by the command above). Live URL: `https://<username>.github.io/mOS/`.
 
 ---
 
