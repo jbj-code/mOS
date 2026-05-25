@@ -6,12 +6,12 @@
 
 ## What It Is
 
-**mOS** is a personal progressive web app that acts as a lightweight operating-system-style hub. It is built for a single user (Joe) and combines multiple life domains into one installable mobile/desktop experience. The vision is a super app: one home screen that links out to focused mini-apps (finance, meals, supplements, and more over time).
+**mOS** is a personal progressive web app that acts as a lightweight operating-system-style hub. It is built for a single user (Joe) and combines multiple life domains into one installable mobile-first experience.
 
-Currently live modules:
-- **Home / Finance** — monthly budget dashboard with income/expense tracking, spending budget (% of income), category breakdowns, and recent activity. Data stored in Supabase.
-- **Meals** — meal builder with ingredient costs; stored locally in `localStorage`.
-- **Stack (Supplements)** — supplement tracker with cost-per-serving and monthly cost; stored in Supabase.
+Current modules:
+- **Home (Hub)** — greeting and module cards that navigate to Finance and Health.
+- **Finance Hub** — **Budget** (income/expense tracking, spending budget %, category breakdowns) and **Meals** (meal builder with proportional ingredient costing). Budget data in Supabase; meals in `localStorage`.
+- **Health Hub** — **Stack** (supplement tracker with cost-per-serving) and **Mass** (daily weight log, 30-day trend chart, monthly average, BMI with saved height). Supplements in Supabase; mass in `localStorage`.
 
 The app is password-gated via `VITE_APP_PASSWORD` and deployed to GitHub Pages at `/mOS/`.
 
@@ -26,27 +26,44 @@ The app is password-gated via `VITE_APP_PASSWORD` and deployed to GitHub Pages a
 | Styling | Tailwind CSS 4 + central theme (`src/theme.ts`) via CSS custom properties |
 | Icons | react-icons (Material Design set) |
 | Backend / DB | Supabase (PostgreSQL) — finance entries + supplements tables |
-| Local storage | `localStorage` / `sessionStorage` for meals, theme, view mode, spending budget % |
+| Local storage | `localStorage` / `sessionStorage` for meals, mass, theme, spending budget % |
 | Hosting | GitHub Pages |
 
 ---
 
 ## Architecture & Key Decisions
 
-**Routing:** Client-side view switching (no React Router). `App.tsx` holds a `view` state (`home` \| `meal` \| `supplements`) and renders the matching page component.
+**Routing:** Client-side view switching (no React Router). `App.tsx` holds:
+- `view`: `home` | `finance` | `health`
+- `financeSection`: `budget` | `meals` (when in Finance Hub)
+- `healthSection`: `stack` | `mass` (when in Health Hub)
+
+**Navigation:** The bottom nav is context-aware:
+- On **Home**: Home | Finance | Health (main hubs)
+- In **Finance Hub**: Home (back to main hub) | Budget | Meals
+- In **Health Hub**: Home (back to main hub) | Stack | Mass
+
+Module sub-sections are driven by the bottom nav — not in-page tabs.
+
+**Page organization** (by domain under `src/pages/`):
+```
+pages/
+  home/Hub.tsx
+  finance/FinancePage.tsx, Budget.tsx, Meals.tsx
+  health/HealthPage.tsx, Stack.tsx, Mass.tsx
+```
 
 **Data layer:**
-- `src/lib/budget.ts` — finance entries (Supabase `entries` table). Includes in-memory cache invalidated on writes.
-- `src/lib/supplements.ts` — supplements (Supabase `supplements` table).
-- `src/lib/meals.ts` — meals (local `localStorage` only).
+- `src/lib/budget.ts` — finance entries (Supabase `entries` table)
+- `src/lib/supplements.ts` — supplements (Supabase `supplements` table)
+- `src/lib/meals.ts` — meals (`localStorage`)
+- `src/lib/mass.ts` — body weight entries (`localStorage`)
 
-**Database:** Schema in `supabase/schema.sql`. Delete old tables in Supabase Table Editor, then run the schema in SQL Editor. RLS disabled (personal single-user app). Entries are fetched one month at a time.
+**Theming:** All brand colors in `src/theme.ts`. Default is **dark** — deep charcoal-green (`#0C1412`) with emerald accent (`#10B981`). Subtle depth via card shadows, not neon glow. Light/dark toggle on Home; persisted under `mos:theme`.
 
-**Theming:** All brand colors in `src/theme.ts`. Default is **dark** — deep forest green (`#050A09`) with emerald accent (`#34D399`). Light mode uses the same green family on a soft mint background. Toggle on Home; persisted in `localStorage` under `mos:theme`.
+**Layout:** Mobile-first with a fixed bottom nav. Responsive on larger screens without a separate desktop/mobile toggle.
 
-**Layout:** Mobile-first with a bottom nav bar. Desktop mode adds a sidebar nav (toggle via header icon on Home). View mode persisted in `localStorage`.
-
-**Security:** Simple client-side password gate (`PasswordGate.tsx`) — not true auth. Supabase anon key is public by design; RLS policies on Supabase side are the real boundary.
+**Security:** Simple client-side password gate (`PasswordGate.tsx`) — not true auth.
 
 ---
 
@@ -54,11 +71,9 @@ The app is password-gated via `VITE_APP_PASSWORD` and deployed to GitHub Pages a
 
 | Token | Dark (default) | Light |
 |-------|----------------|-------|
-| `--mos-bg` | `#050A09` | `#EFF6F2` |
-| `--mos-accent` | `#34D399` | `#047857` |
-| `--mos-accent-card` | `#0F5C47` | `#065F46` |
-
-Dark mode is the primary look — emerald green on deep forest green.
+| `--mos-bg` | `#0C1412` | `#E8F5F0` |
+| `--mos-accent` | `#10B981` | `#059669` |
+| `--mos-accent-card` | `#0D6B52` | `#047857` |
 
 ---
 
@@ -66,74 +81,43 @@ Dark mode is the primary look — emerald green on deep forest green.
 
 ### Built
 - Password gate + session unlock
-- Home dashboard: month picker, net budget card, income/spend cards, adjustable spending budget %, quick actions, recent activity (transactions + category views)
-- Add income / add expense modals with categorized entries
-- Meals page: create/delete meals with ingredient pricing (local only)
-- Supplements page: create/delete supplements with cost calculations (Supabase)
+- Hub home with module cards
+- Nested bottom nav per module
+- Finance Hub: budget dashboard + meals
+- Health Hub: supplement stack + mass tracker
 - Light/dark theme toggle
-- Mobile ↔ desktop layout toggle
 - PWA manifest
 
 ### Not yet built / planned
-- Additional super-app modules (tasks, notes, fitness, etc.)
+- Additional super-app modules (tasks, notes, calendar, etc.)
 - True authentication (currently password-only)
-- Meals synced to Supabase
-- Pagination on finance entry lists (currently loads all entries)
-- App icon asset in repo (`public/icons/mos-icon.jpg` — referenced but not committed)
+- Meals and mass synced to Supabase
+- PWA manifest with `public/logo.png` as favicon and app icon
 
 ---
 
 ## Common Commands
 
 ```powershell
-# Apply database schema (copy supabase/schema.sql into Supabase SQL Editor, or use CLI)
-# Supabase dashboard → SQL → New query → paste schema.sql → Run
-
-# Install dependencies
 npm install
-
-# Dev server (http://localhost:5173)
 npm run dev
-
-# Type-check + production build
 npm run build
-
-# Preview production build locally
 npm run preview
 ```
 
-**Environment:** Copy `.env.example` → `.env.local` for local dev. Never commit real values.
+**Environment:** Copy `.env.example` → `.env.local` for local dev.
 
-**Deploy (same as LOGD):** Settings → Pages → **GitHub Actions**. Push to `main` runs `.github/workflows/deploy.yml` — builds the app and publishes to Pages. No `gh-pages` branch needed.
-
-Repo secrets required (**Settings → Secrets → Actions**): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_APP_PASSWORD`.
+**Deploy:** Push to `main` runs `.github/workflows/deploy.yml`. Repo secrets: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_APP_PASSWORD`.
 
 Live URL: `https://jbj-code.github.io/mOS/`
-
-Password / `.env.local` changes only need a dev server restart — not a redeploy.
-
----
-
-## Environment variables
-
-Read from `.env.local` (local dev) via `import.meta.env`. Nothing is hardcoded in source.
-
-| Variable | Used in |
-|----------|---------|
-| `VITE_SUPABASE_URL` | `src/supabaseClient.ts` |
-| `VITE_SUPABASE_ANON_KEY` | `src/supabaseClient.ts` |
-| `VITE_APP_PASSWORD` | `src/components/PasswordGate.tsx` — lock screen skipped when unset |
-
-Vite only exposes vars prefixed with `VITE_`. Supabase values: dashboard → **Project Settings → API**.
 
 ---
 
 ## Gotchas
 
-- **Base path:** Vite `base` is `/mOS/` — must match the GitHub repo name for project Pages (`username.github.io/mOS/`). Update bookmarks or installed PWA shortcuts if you renamed the repo.
-- **CSS variable prefix:** Theme tokens use `--mos-*` and utility classes use `mos-*` (e.g. `mos-clickable-card`).
-- **No secrets in git:** Use `.env.local` locally. Never commit credentials.
-- **Finance cache:** `budget.ts` caches entries per month in memory. Each query is date-bounded with a 500-row cap per month.
+- **Base path:** Vite `base` is `/mOS/` — must match the GitHub repo name.
+- **CSS variable prefix:** Theme tokens use `--mos-*`; utility classes use `mos-*`.
+- **Finance cache:** `budget.ts` caches entries per month in memory (500-row cap per month).
 
 ---
 

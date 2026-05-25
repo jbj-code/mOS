@@ -1,9 +1,9 @@
-// src/pages/Supplements.tsx
-// Stack page: track supplements with cost-per-serving and monthly cost.
+// src/pages/health/Stack.tsx
+// Supplement stack: track supplements with cost-per-serving and monthly cost.
 
 import { useEffect, useState } from 'react'
 import { MdScience } from 'react-icons/md'
-import { useLongPressReveal } from '../hooks/useLongPressReveal'
+import { useLongPressReveal } from '../../hooks/useLongPressReveal'
 import {
   loadSupplements,
   createSupplement,
@@ -11,14 +11,14 @@ import {
   costPerServing,
   monthlyCost,
   type Supplement,
-} from '../lib/supplements'
+} from '../../lib/supplements'
 
 type Props = {
   isAddOpen: boolean
   onCloseAdd: () => void
 }
 
-export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
+export default function Stack({ isAddOpen, onCloseAdd }: Props) {
   const [supplements, setSupplements] = useState<Supplement[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [name, setName] = useState('')

@@ -1,5 +1,5 @@
-// src/pages/Home.tsx
-// Home dashboard: monthly budget, income/spend, quick actions, and recent activity.
+// src/pages/finance/Budget.tsx
+// Monthly budget dashboard: income, spend, transactions, and category breakdown.
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -7,9 +7,6 @@ import {
   MdChevronRight,
   MdTrendingDown,
   MdTrendingUp,
-  MdCurrencyExchange,
-  MdLunchDining,
-  MdScience,
   MdDataUsage,
   MdInfo,
   MdExpandMore,
@@ -27,18 +24,12 @@ import {
   getNextMonth,
   DEFAULT_BUDGET_CATEGORIES,
   type Expense,
-} from '../lib/budget'
-import { getCategoryIcon, getCategoryColor, INCOME_CATEGORIES } from '../lib/categoryIcons'
-import { loadSupplements, monthlyCost, type Supplement } from '../lib/supplements'
-import { CategoryCard } from '../components/CategoryCard'
-import { useSpendingBudgetPct, SPENDING_BUDGET_PCT_MIN, SPENDING_BUDGET_PCT_MAX } from '../hooks/useSpendingBudgetPct'
-import type { View } from '../nav'
+} from '../../lib/budget'
+import { getCategoryIcon, getCategoryColor, INCOME_CATEGORIES } from '../../lib/categoryIcons'
+import { CategoryCard } from '../../components/CategoryCard'
+import { useSpendingBudgetPct, SPENDING_BUDGET_PCT_MIN, SPENDING_BUDGET_PCT_MAX } from '../../hooks/useSpendingBudgetPct'
 
-type Props = {
-  onView: (view: View) => void
-}
-
-export default function Home({ onView }: Props) {
+export default function Budget() {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey)
   const { spendingBudgetPct, setSpendingBudgetPct } = useSpendingBudgetPct()
@@ -53,7 +44,6 @@ export default function Home({ onView }: Props) {
   const [expenseCategory, setExpenseCategory] = useState(() => DEFAULT_BUDGET_CATEGORIES[0] ?? '')
   const [expenseAmount, setExpenseAmount] = useState('')
   const [expenseDate, setExpenseDate] = useState(getTodayLocalISO)
-  const [supplements, setSupplements] = useState<Supplement[]>([])
   const [recentActivityView, setRecentActivityView] = useState<'transactions' | 'categories'>(
     'transactions',
   )
@@ -69,18 +59,6 @@ export default function Home({ onView }: Props) {
       ignore = true
     }
   }, [selectedMonth])
-
-  useEffect(() => {
-    let ignore = false
-    async function load() {
-      const data = await loadSupplements()
-      if (!ignore) setSupplements(data)
-    }
-    load()
-    return () => {
-      ignore = true
-    }
-  }, [])
 
   const monthExpenses = expenses
   const totals = useMemo(
@@ -128,34 +106,6 @@ export default function Home({ onView }: Props) {
       .map(([category, amount]) => ({ category, amount }))
       .sort((a, b) => b.amount - a.amount)
   }, [monthExpenses])
-
-  const stackMonthlyTotal = useMemo(() => {
-    return supplements.reduce((sum, s) => sum + monthlyCost(s), 0)
-  }, [supplements])
-
-  const quickActions = useMemo(
-    () => [
-      {
-        label: 'Meals',
-        Icon: MdLunchDining,
-        onClick: () => onView('meal'),
-        amount: '—',
-      },
-      {
-        label: 'Stack',
-        Icon: MdScience,
-        onClick: () => onView('supplements'),
-        amount: `$${stackMonthlyTotal.toFixed(0)}/mo`,
-      },
-      {
-        label: 'Transactions',
-        Icon: MdCurrencyExchange,
-        onClick: () => setRecentActivityView('transactions'),
-        amount: `${monthExpenses.length} ${monthExpenses.length === 1 ? 'entry' : 'entries'}`,
-      },
-    ],
-    [onView, stackMonthlyTotal, monthExpenses.length],
-  )
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -318,28 +268,6 @@ export default function Home({ onView }: Props) {
           </span>
         </div>
       </button>
-
-      {/* Quick actions: Meals, Stack, Transactions – vertical cards like Monthly income/spend */}
-      <div className="grid grid-cols-3 gap-3">
-        {quickActions.map(({ label, Icon, onClick, amount }) => (
-          <button
-            key={label}
-            type="button"
-            onClick={onClick}
-            className="mos-clickable-card flex flex-col items-center rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-center shadow-[var(--mos-shadow)]"
-          >
-            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--mos-bg-muted)]">
-              <Icon className="text-[var(--mos-text-muted)]" size={22} />
-            </div>
-            <p className="text-xs font-medium tracking-wide text-[var(--mos-text-muted)]">
-              {label}
-            </p>
-            <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--mos-accent)]">
-              {amount}
-            </p>
-          </button>
-        ))}
-      </div>
 
       {/* Recent Activity */}
       <div>

@@ -30,9 +30,29 @@
 
   [data-theme='dark'] body {
     background:
-      radial-gradient(ellipse 120% 70% at 50% -15%, #152922 0%, transparent 55%),
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(16, 185, 129, 0.06) 0%, transparent 55%),
       var(--mos-bg);
   }
+}
+
+.mos-app-shell {
+  background: transparent;
+}
+
+.mos-glass-card {
+  background: var(--mos-bg-elevated);
+  border-color: var(--mos-border);
+  box-shadow: var(--mos-card-shadow);
+}
+
+.mos-nav-item {
+  color: var(--mos-text-muted);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.mos-nav-item--active {
+  color: var(--mos-accent);
+  background: var(--mos-bg-muted);
 }
 
 /* Pointer cursor for interactive elements (desktop) */
@@ -49,14 +69,12 @@ a,
     cursor: pointer;
     transition:
       transform 0.2s ease-out,
-      box-shadow 0.2s ease-out,
       border-color 0.2s ease-out;
-    box-shadow: var(--mos-card-glow);
+    box-shadow: var(--mos-card-shadow);
   }
   .mos-clickable-card:hover {
-    transform: scale(1.02);
-    border-color: var(--mos-accent);
-    box-shadow: var(--mos-card-glow), var(--mos-accent-glow);
+    transform: scale(1.01);
+    border-color: var(--mos-border);
   }
 }
 
@@ -78,23 +96,9 @@ a,
   z-index: 50;
 }
 .mos-nav-bar-inner {
-  border-radius: 1.5rem 1.5rem 0 0;
+  border-radius: 1.25rem;
   border-bottom: none;
-  box-shadow: var(--mos-shadow-lg), var(--mos-card-glow);
-}
-
-/* Desktop sidebar */
-.mos-sidebar {
-  width: 12rem;
-  flex-shrink: 0;
-  border-right: 1px solid var(--mos-border);
-  background: var(--mos-bg-elevated);
-}
-.mos-sidebar-nav {
-  padding-top: 0.5rem;
-}
-.mos-sidebar-item:hover {
-  background: var(--mos-bg-muted);
+  box-shadow: var(--mos-shadow-lg);
 }
 
 /* Reusable page header: title + optional subtitle left, optional action right.
