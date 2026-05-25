@@ -104,14 +104,13 @@ npm run preview
 
 **Environment:** Copy `.env.example` → `.env.local` for local dev. Never commit real values.
 
-**Deploy (GitHub Pages — branch):** Settings → Pages → **Deploy from branch**. GitHub serves static files only — it does not run `npm run build`. After code changes, build locally and publish the output:
+**Deploy (same as LOGD):** Settings → Pages → **GitHub Actions**. Push to `main` runs `.github/workflows/deploy.yml` — builds the app and publishes to Pages. No `gh-pages` branch needed.
 
-```powershell
-npm run build
-npx gh-pages -d dist
-```
+Repo secrets required (**Settings → Secrets → Actions**): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_APP_PASSWORD`.
 
-Set Pages source to the **`gh-pages`** branch (created by the command above). Live URL: `https://<username>.github.io/mOS/`.
+Live URL: `https://jbj-code.github.io/mOS/`
+
+Password / `.env.local` changes only need a dev server restart — not a redeploy.
 
 ---
 
