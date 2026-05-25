@@ -1,3 +1,6 @@
+// src/pages/Home.tsx
+// Home dashboard: monthly budget, income/spend, quick actions, and recent activity.
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   MdChevronLeft,
@@ -12,7 +15,7 @@ import {
   MdExpandMore,
 } from 'react-icons/md'
 import {
-  loadExpenses,
+  loadExpensesForMonth,
   computeBudgetTotals,
   computeIncomeTotals,
   formatBudgetDate,
@@ -22,7 +25,6 @@ import {
   formatMonthLabel,
   getPrevMonth,
   getNextMonth,
-  filterByMonth,
   DEFAULT_BUDGET_CATEGORIES,
   type Expense,
 } from '../lib/budget'
@@ -59,14 +61,14 @@ export default function Home({ onView }: Props) {
   useEffect(() => {
     let ignore = false
     async function load() {
-      const data = await loadExpenses()
+      const data = await loadExpensesForMonth(selectedMonth)
       if (!ignore) setExpenses(data)
     }
     load()
     return () => {
       ignore = true
     }
-  }, [])
+  }, [selectedMonth])
 
   useEffect(() => {
     let ignore = false
@@ -80,10 +82,7 @@ export default function Home({ onView }: Props) {
     }
   }, [])
 
-  const monthExpenses = useMemo(
-    () => filterByMonth(expenses, selectedMonth),
-    [expenses, selectedMonth],
-  )
+  const monthExpenses = expenses
   const totals = useMemo(
     () => computeBudgetTotals(monthExpenses),
     [monthExpenses],
@@ -165,12 +164,12 @@ export default function Home({ onView }: Props) {
         <button
           type="button"
           onClick={() => setSelectedMonth(getPrevMonth(selectedMonth))}
-          className="orb-touch-target flex items-center justify-center rounded-full text-[var(--orb-text-muted)] hover:bg-[var(--orb-bg-muted)] hover:text-[var(--orb-text)]"
+          className="mos-touch-target flex items-center justify-center rounded-full text-[var(--mos-text-muted)] hover:bg-[var(--mos-bg-muted)] hover:text-[var(--mos-text)]"
           aria-label="Previous month"
         >
           <MdChevronLeft size={24} />
         </button>
-        <span className="min-w-0 truncate text-center text-sm font-medium text-[var(--orb-text)]">
+        <span className="min-w-0 truncate text-center text-sm font-medium text-[var(--mos-text)]">
           {formatMonthLabel(selectedMonth)}
         </span>
         <button
@@ -180,10 +179,10 @@ export default function Home({ onView }: Props) {
               ? undefined
               : setSelectedMonth(getNextMonth(selectedMonth))
           }
-          className={`orb-touch-target flex items-center justify-center rounded-full ${
+          className={`mos-touch-target flex items-center justify-center rounded-full ${
             isCurrentMonth
               ? 'cursor-default opacity-40'
-              : 'text-[var(--orb-text-muted)] hover:bg-[var(--orb-bg-muted)] hover:text-[var(--orb-text)]'
+              : 'text-[var(--mos-text-muted)] hover:bg-[var(--mos-bg-muted)] hover:text-[var(--mos-text)]'
           }`}
           aria-label="Next month"
           disabled={isCurrentMonth}
@@ -195,7 +194,7 @@ export default function Home({ onView }: Props) {
       {/* Budget net card - centered */}
       <div
         className="rounded-2xl px-4 py-5 text-center sm:px-5 sm:py-6"
-        style={{ background: 'var(--orb-accent-card)' }}
+        style={{ background: 'var(--mos-accent-card)' }}
       >
         <p className="text-xs font-medium tracking-wide text-white/80">
           Budget
@@ -214,42 +213,42 @@ export default function Home({ onView }: Props) {
         <button
           type="button"
           onClick={() => setAddIncomeModalOpen(true)}
-          className="orb-clickable-card flex flex-col items-center rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 text-center shadow-[var(--orb-shadow)]"
+          className="mos-clickable-card flex flex-col items-center rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-center shadow-[var(--mos-shadow)]"
         >
           <div
             className="mb-2 flex h-9 w-9 items-center justify-center rounded-full"
-            style={{ background: 'var(--orb-income-bg)' }}
+            style={{ background: 'var(--mos-income-bg)' }}
           >
             <MdTrendingDown
               size={20}
-              style={{ color: 'var(--orb-accent)' }}
+              style={{ color: 'var(--mos-accent)' }}
             />
           </div>
-          <p className="text-xs font-medium tracking-wide text-[var(--orb-text-muted)]">
+          <p className="text-xs font-medium tracking-wide text-[var(--mos-text-muted)]">
             Monthly Income
           </p>
-          <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--orb-text)]">
+          <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--mos-text)]">
             ${income.toFixed(2)}
           </p>
         </button>
         <button
           type="button"
           onClick={() => setAddExpenseModalOpen(true)}
-          className="orb-clickable-card flex flex-col items-center rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 text-center shadow-[var(--orb-shadow)]"
+          className="mos-clickable-card flex flex-col items-center rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-center shadow-[var(--mos-shadow)]"
         >
           <div
             className="mb-2 flex h-9 w-9 items-center justify-center rounded-full"
-            style={{ background: 'var(--orb-spent-bg)' }}
+            style={{ background: 'var(--mos-spent-bg)' }}
           >
             <MdTrendingUp
               size={20}
-              style={{ color: 'var(--orb-spent-icon)' }}
+              style={{ color: 'var(--mos-spent-icon)' }}
             />
           </div>
-          <p className="text-xs font-medium tracking-wide text-[var(--orb-text-muted)]">
+          <p className="text-xs font-medium tracking-wide text-[var(--mos-text-muted)]">
             Monthly Spend
           </p>
-          <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--orb-text)]">
+          <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--mos-text)]">
             ${spent.toFixed(2)}
           </p>
         </button>
@@ -259,32 +258,32 @@ export default function Home({ onView }: Props) {
       <button
         type="button"
         onClick={() => setSpendingBudgetModalOpen(true)}
-        className="orb-clickable-card w-full rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 text-left shadow-[var(--orb-shadow)] sm:p-5"
+        className="mos-clickable-card w-full rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-left shadow-[var(--mos-shadow)] sm:p-5"
       >
         <div className="flex items-center gap-2">
           <MdDataUsage
             className="shrink-0"
             size={20}
-            style={{ color: 'var(--orb-accent)' }}
+            style={{ color: 'var(--mos-accent)' }}
           />
-          <h2 className="font-semibold text-[var(--orb-text)]">
+          <h2 className="font-semibold text-[var(--mos-text)]">
             Spending Budget
           </h2>
         </div>
         <div className="mt-3">
-          <span className="text-lg font-semibold tabular-nums text-[var(--orb-text)]">
+          <span className="text-lg font-semibold tabular-nums text-[var(--mos-text)]">
             ${spent.toFixed(0)}
           </span>
-          <span className="text-[var(--orb-text-muted)]"> / </span>
-          <span className="text-lg font-semibold tabular-nums text-[var(--orb-text-muted)]">
+          <span className="text-[var(--mos-text-muted)]"> / </span>
+          <span className="text-lg font-semibold tabular-nums text-[var(--mos-text-muted)]">
             ${spendingBudget.toFixed(0)}
           </span>
-          <span className="ml-1 text-xs text-[var(--orb-text-muted)]">
+          <span className="ml-1 text-xs text-[var(--mos-text-muted)]">
             ({spendingBudgetPct}% of income)
           </span>
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--orb-bg-muted)]">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--mos-bg-muted)]">
             <div className="flex h-full w-full">
               {spent > 0 &&
                 (totals.categoryTotals ?? []).map(([category, amount]) => {
@@ -307,14 +306,14 @@ export default function Home({ onView }: Props) {
           </div>
           <span
             className="text-xs font-medium tabular-nums"
-            style={{ color: 'var(--orb-accent)' }}
+            style={{ color: 'var(--mos-accent)' }}
           >
             {progressPct.toFixed(0)}%
           </span>
         </div>
         <div className="mt-2 flex items-center gap-1.5 text-sm">
-          <MdInfo className="shrink-0" size={18} style={{ color: 'var(--orb-accent)' }} />
-          <span style={{ color: 'var(--orb-accent)' }}>
+          <MdInfo className="shrink-0" size={18} style={{ color: 'var(--mos-accent)' }} />
+          <span style={{ color: 'var(--mos-accent)' }}>
             Safe to spend: ${safeToSpend.toFixed(0)}
           </span>
         </div>
@@ -327,15 +326,15 @@ export default function Home({ onView }: Props) {
             key={label}
             type="button"
             onClick={onClick}
-            className="orb-clickable-card flex flex-col items-center rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 text-center shadow-[var(--orb-shadow)]"
+            className="mos-clickable-card flex flex-col items-center rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-center shadow-[var(--mos-shadow)]"
           >
-            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--orb-bg-muted)]">
-              <Icon className="text-[var(--orb-text-muted)]" size={22} />
+            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--mos-bg-muted)]">
+              <Icon className="text-[var(--mos-text-muted)]" size={22} />
             </div>
-            <p className="text-xs font-medium tracking-wide text-[var(--orb-text-muted)]">
+            <p className="text-xs font-medium tracking-wide text-[var(--mos-text-muted)]">
               {label}
             </p>
-            <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--orb-accent)]">
+            <p className="mt-0.5 text-lg font-semibold tabular-nums text-[var(--mos-accent)]">
               {amount}
             </p>
           </button>
@@ -345,7 +344,7 @@ export default function Home({ onView }: Props) {
       {/* Recent Activity */}
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-semibold text-[var(--orb-text)]">
+          <h2 className="font-semibold text-[var(--mos-text)]">
             Recent Activity
           </h2>
           <button
@@ -355,8 +354,8 @@ export default function Home({ onView }: Props) {
                 v === 'transactions' ? 'categories' : 'transactions',
               )
             }
-            className="orb-clickable text-sm font-medium"
-            style={{ color: 'var(--orb-accent)' }}
+            className="mos-clickable text-sm font-medium"
+            style={{ color: 'var(--mos-accent)' }}
           >
             {recentActivityView === 'transactions'
               ? 'View categories'
@@ -387,7 +386,7 @@ export default function Home({ onView }: Props) {
         ) : (
           <div className="space-y-3">
             {recentEntries.length === 0 ? (
-              <p className="rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 text-sm text-[var(--orb-text-muted)]">
+              <p className="rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 text-sm text-[var(--mos-text-muted)]">
                 No entries for {formatMonthLabel(selectedMonth)}.
               </p>
             ) : (
@@ -399,7 +398,7 @@ export default function Home({ onView }: Props) {
                 return (
                   <div
                     key={entry.id}
-                    className="orb-clickable-card flex items-center gap-3 rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-3 shadow-[var(--orb-shadow)] sm:p-4"
+                    className="mos-clickable-card flex items-center gap-3 rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-3 shadow-[var(--mos-shadow)] sm:p-4"
                   >
                     <div
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -411,10 +410,10 @@ export default function Home({ onView }: Props) {
                       <CategoryIcon size={22} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-[var(--orb-text)] truncate">
+                      <p className="font-semibold text-[var(--mos-text)] truncate">
                         {entry.label || (isIncome ? 'Income' : 'Expense')}
                       </p>
-                      <p className="text-xs text-[var(--orb-text-muted)]">
+                      <p className="text-xs text-[var(--mos-text-muted)]">
                         {displayCategory}
                       </p>
                     </div>
@@ -422,13 +421,13 @@ export default function Home({ onView }: Props) {
                       <span
                         className={`font-semibold tabular-nums ${
                           isIncome
-                            ? 'text-[var(--orb-accent)]'
-                            : 'text-[var(--orb-danger)]'
+                            ? 'text-[var(--mos-accent)]'
+                            : 'text-[var(--mos-danger)]'
                         }`}
                       >
                         {isIncome ? '+' : '-'}${Math.abs(entry.amount).toFixed(2)}
                       </span>
-                      <p className="text-xs text-[var(--orb-text-muted)]">
+                      <p className="text-xs text-[var(--mos-text-muted)]">
                         {formatBudgetDate(entry.date)}
                       </p>
                     </div>
@@ -450,13 +449,13 @@ export default function Home({ onView }: Props) {
           onClick={() => setSpendingBudgetModalOpen(false)}
         >
           <div
-            className="orb-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 shadow-[var(--orb-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
+            className="mos-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 shadow-[var(--mos-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-[var(--orb-text)]">
+            <h3 className="text-lg font-semibold text-[var(--mos-text)]">
               Spending budget %
             </h3>
-            <p className="mt-1 text-sm text-[var(--orb-text-muted)]">
+            <p className="mt-1 text-sm text-[var(--mos-text-muted)]">
               Use this % of monthly income as your spending budget (rest is saved).
             </p>
             <SpendingBudgetPctForm
@@ -496,15 +495,19 @@ export default function Home({ onView }: Props) {
               setIncomeCategory(INCOME_CATEGORIES[0] ?? '')
             }}
             onSubmit={async (payload) => {
-              const created = await createEntry(payload)
-              if (created) {
-                setExpenses((prev) => [created, ...prev])
+              const result = await createEntry(payload)
+              if (result.data) {
+                if (result.data.date.startsWith(selectedMonth)) {
+                  setExpenses((prev) => [result.data!, ...prev])
+                }
                 setAddIncomeModalOpen(false)
                 setIncomeLabel('')
                 setIncomeAmount('')
                 setIncomeDate(getTodayLocalISO())
                 setIncomeCategory(INCOME_CATEGORIES[0] ?? '')
+                return null
               }
+              return result.error
             }}
           />
         </div>
@@ -536,15 +539,19 @@ export default function Home({ onView }: Props) {
               setExpenseDate(getTodayLocalISO())
             }}
             onSubmit={async (payload) => {
-              const created = await createEntry(payload)
-              if (created) {
-                setExpenses((prev) => [created, ...prev])
+              const result = await createEntry(payload)
+              if (result.data) {
+                if (result.data.date.startsWith(selectedMonth)) {
+                  setExpenses((prev) => [result.data!, ...prev])
+                }
                 setAddExpenseModalOpen(false)
                 setExpenseLabel('')
                 setExpenseCategory(DEFAULT_BUDGET_CATEGORIES[0] ?? '')
                 setExpenseAmount('')
                 setExpenseDate(getTodayLocalISO())
+                return null
               }
+              return result.error
             }}
           />
         </div>
@@ -580,11 +587,11 @@ function CategorySelect({
   const color = getCategoryColor(displayValue)
   return (
     <div ref={ref} className="relative">
-      <label className="text-xs font-medium text-[var(--orb-text-muted)]">{label}</label>
+      <label className="text-xs font-medium text-[var(--mos-text-muted)]">{label}</label>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="orb-clickable mt-1 flex h-10 w-full items-center gap-2 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-left text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+        className="mos-clickable mt-1 flex h-10 w-full items-center gap-2 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-left text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
       >
         <div
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
@@ -593,10 +600,10 @@ function CategorySelect({
           <Icon size={16} />
         </div>
         <span className="min-w-0 flex-1 truncate">{displayValue}</span>
-        <MdExpandMore size={20} className="shrink-0 text-[var(--orb-text-muted)]" />
+        <MdExpandMore size={20} className="shrink-0 text-[var(--mos-text-muted)]" />
       </button>
       {open && (
-        <div className="absolute left-0 right-0 top-full z-10 mt-1 max-h-56 overflow-auto rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] py-1 shadow-lg">
+        <div className="absolute left-0 right-0 top-full z-10 mt-1 max-h-56 overflow-auto rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] py-1 shadow-lg">
           {categories.map((c) => {
             const CIcon = getCategoryIcon(c)
             const cColor = getCategoryColor(c)
@@ -610,7 +617,7 @@ function CategorySelect({
                   setOpen(false)
                 }}
                 className={`flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm ${
-                  isSelected ? 'bg-[var(--orb-bg-muted)]' : 'hover:bg-[var(--orb-bg-muted)]'
+                  isSelected ? 'bg-[var(--mos-bg-muted)]' : 'hover:bg-[var(--mos-bg-muted)]'
                 }`}
               >
                 <div
@@ -652,16 +659,16 @@ function SpendingBudgetPctForm({
           max={max}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 accent-[var(--orb-accent)]"
+          className="flex-1 accent-[var(--mos-accent)]"
         />
-        <span className="w-12 text-right font-semibold tabular-nums text-[var(--orb-text)]">
+        <span className="w-12 text-right font-semibold tabular-nums text-[var(--mos-text)]">
           {value}%
         </span>
       </div>
       <button
         type="button"
         onClick={onSave}
-        className="w-full rounded-xl bg-[var(--orb-accent)] py-3 text-sm font-semibold text-[var(--orb-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95"
+        className="w-full rounded-xl bg-[var(--mos-accent)] py-3 text-sm font-semibold text-[var(--mos-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95"
       >
         Done
       </button>
@@ -691,49 +698,53 @@ function AddIncomeSheet({
   category: string
   setCategory: (s: string) => void
   onClose: () => void
-  onSubmit: (payload: Omit<Expense, 'id'>) => Promise<void>
+  onSubmit: (payload: Omit<Expense, 'id'>) => Promise<string | null>
 }) {
+  const [saveError, setSaveError] = useState<string | null>(null)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const amt = Number(amount)
     const cat = (category || (INCOME_CATEGORIES[0] ?? '')).trim()
     if (!label.trim() || Number.isNaN(amt) || amt <= 0 || !cat) return
-    await onSubmit({
+    setSaveError(null)
+    const error = await onSubmit({
       label: label.trim(),
       category: cat,
       amount: amt,
       date,
       kind: 'income',
     })
+    if (error) setSaveError(error)
   }
   return (
     <div
-      className="orb-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 shadow-[var(--orb-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
+      className="mos-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 shadow-[var(--mos-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 items-center justify-center rounded-full"
-            style={{ background: 'var(--orb-income-bg)' }}
+            style={{ background: 'var(--mos-income-bg)' }}
           >
-            <MdTrendingDown size={20} style={{ color: 'var(--orb-accent)' }} />
+            <MdTrendingDown size={20} style={{ color: 'var(--mos-accent)' }} />
           </div>
-          <h3 className="text-lg font-semibold text-[var(--orb-text)]">Add income</h3>
+          <h3 className="text-lg font-semibold text-[var(--mos-text)]">Add income</h3>
         </div>
-        <button type="button" onClick={onClose} className="text-[var(--orb-text-muted)] hover:text-[var(--orb-text)]">
+        <button type="button" onClick={onClose} className="text-[var(--mos-text-muted)] hover:text-[var(--mos-text)]">
           Cancel
         </button>
       </div>
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">What is this?</label>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">What is this?</label>
           <input
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder="Paycheck, refund, sale..."
-            className="orb-input mt-1 h-10 w-full rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+            className="mos-input mt-1 h-10 w-full rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
           />
         </div>
         <div>
@@ -745,9 +756,9 @@ function AddIncomeSheet({
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">Amount</label>
-          <div className="mt-1 flex items-baseline rounded-xl border border-[var(--orb-border)] bg-white shadow-sm dark:bg-[var(--orb-bg)]">
-            <span className="orb-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--orb-text)]">$</span>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">Amount</label>
+          <div className="mt-1 flex items-baseline rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] shadow-[var(--mos-shadow)]">
+            <span className="mos-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--mos-text)]">$</span>
             <input
               type="number"
               inputMode="decimal"
@@ -756,26 +767,29 @@ function AddIncomeSheet({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="orb-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--orb-text)] outline-none focus:ring-0"
+              className="mos-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--mos-text)] outline-none focus:ring-0"
             />
           </div>
         </div>
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">Date</label>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="orb-input mt-1 h-10 w-full rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-2 text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+            className="mos-input mt-1 h-10 w-full rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-2 text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
           />
         </div>
         <button
           type="submit"
           disabled={!label.trim() || !amount.trim() || !(category || INCOME_CATEGORIES[0])?.trim()}
-          className="mt-6 w-full rounded-xl bg-[var(--orb-accent)] py-3 text-sm font-semibold text-[var(--orb-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
+          className="mt-6 w-full rounded-xl bg-[var(--mos-accent)] py-3 text-sm font-semibold text-[var(--mos-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
         >
           Save
         </button>
+        {saveError && (
+          <p className="mt-2 text-xs text-[var(--mos-danger)]">{saveError}</p>
+        )}
       </form>
     </div>
   )
@@ -803,42 +817,46 @@ function AddExpenseSheet({
   date: string
   setDate: (s: string) => void
   onClose: () => void
-  onSubmit: (payload: Omit<Expense, 'id'>) => Promise<void>
+  onSubmit: (payload: Omit<Expense, 'id'>) => Promise<string | null>
 }) {
+  const [saveError, setSaveError] = useState<string | null>(null)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const amt = Number(amount)
     if (!label.trim() || Number.isNaN(amt) || amt <= 0) return
-    await onSubmit({
+    setSaveError(null)
+    const error = await onSubmit({
       label: label.trim(),
       category: category.trim() || (DEFAULT_BUDGET_CATEGORIES[0] ?? 'Other'),
       amount: amt,
       date,
       kind: 'expense',
     })
+    if (error) setSaveError(error)
   }
   return (
     <div
-      className="orb-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-4 shadow-[var(--orb-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
+      className="mos-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-4 shadow-[var(--mos-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-5"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 items-center justify-center rounded-full"
-            style={{ background: 'var(--orb-spent-bg)' }}
+            style={{ background: 'var(--mos-spent-bg)' }}
           >
-            <MdTrendingUp size={20} style={{ color: 'var(--orb-spent-icon)' }} />
+            <MdTrendingUp size={20} style={{ color: 'var(--mos-spent-icon)' }} />
           </div>
-          <h3 className="text-lg font-semibold text-[var(--orb-text)]">Add expense</h3>
+          <h3 className="text-lg font-semibold text-[var(--mos-text)]">Add expense</h3>
         </div>
-        <button type="button" onClick={onClose} className="text-[var(--orb-text-muted)] hover:text-[var(--orb-text)]">
+        <button type="button" onClick={onClose} className="text-[var(--mos-text-muted)] hover:text-[var(--mos-text)]">
           Cancel
         </button>
       </div>
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">What is this?</label>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">What is this?</label>
           <input
             type="text"
             value={label}
@@ -856,7 +874,7 @@ function AddExpenseSheet({
               }
             }}
             placeholder="Groceries, Food & Dining, Uber..."
-            className="orb-input mt-1 h-10 w-full rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+            className="mos-input mt-1 h-10 w-full rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
           />
         </div>
         <div>
@@ -868,9 +886,9 @@ function AddExpenseSheet({
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">Amount</label>
-          <div className="mt-1 flex items-baseline rounded-xl border border-[var(--orb-border)] bg-white shadow-sm dark:bg-[var(--orb-bg)]">
-            <span className="orb-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--orb-text)]">$</span>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">Amount</label>
+          <div className="mt-1 flex items-baseline rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] shadow-[var(--mos-shadow)]">
+            <span className="mos-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--mos-text)]">$</span>
             <input
               type="number"
               inputMode="decimal"
@@ -879,26 +897,29 @@ function AddExpenseSheet({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="orb-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--orb-text)] outline-none focus:ring-0"
+              className="mos-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--mos-text)] outline-none focus:ring-0"
             />
           </div>
         </div>
         <div>
-          <label className="text-xs font-medium text-[var(--orb-text-muted)]">Date</label>
+          <label className="text-xs font-medium text-[var(--mos-text-muted)]">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="orb-input mt-1 h-10 w-full rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-2 text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+            className="mos-input mt-1 h-10 w-full rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-2 text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
           />
         </div>
         <button
           type="submit"
           disabled={!label.trim() || !amount.trim()}
-          className="mt-6 w-full rounded-xl bg-[var(--orb-accent)] py-3 text-sm font-semibold text-[var(--orb-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
+          className="mt-6 w-full rounded-xl bg-[var(--mos-accent)] py-3 text-sm font-semibold text-[var(--mos-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
         >
           Save
         </button>
+        {saveError && (
+          <p className="mt-2 text-xs text-[var(--mos-danger)]">{saveError}</p>
+        )}
       </form>
     </div>
   )

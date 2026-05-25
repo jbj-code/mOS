@@ -1,3 +1,6 @@
+// src/supabaseClient.ts
+// Supabase client singleton; credentials loaded from VITE_SUPABASE_* env vars.
+
 import { createClient } from '@supabase/supabase-js'
 
 const url = import.meta.env.VITE_SUPABASE_URL

@@ -1,3 +1,6 @@
+// src/hooks/useTheme.ts
+// Hook to read/write mOS light/dark theme with localStorage persistence.
+
 import { useCallback, useEffect, useState } from 'react'
 import {
   applyTheme,

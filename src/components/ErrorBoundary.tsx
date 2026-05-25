@@ -1,3 +1,6 @@
+// src/components/ErrorBoundary.tsx
+// Catches render errors and shows a fallback UI instead of a blank screen.
+
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 type Props = { children: ReactNode }
@@ -19,22 +22,41 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           className="flex min-h-screen items-center justify-center p-4"
-          style={{ background: 'var(--orb-bg, #f1f5f9)' }}
+          style={{ background: 'var(--mos-bg)' }}
         >
-          <div className="max-w-md rounded-2xl border border-red-300 bg-white p-4 shadow-lg dark:border-red-700 dark:bg-gray-900">
-            <h2 className="text-lg font-semibold text-red-700 dark:text-red-400">
+          <div
+            className="max-w-md rounded-2xl border p-4 shadow-[var(--mos-shadow-lg)]"
+            style={{
+              background: 'var(--mos-bg-elevated)',
+              borderColor: 'var(--mos-danger)',
+            }}
+          >
+            <h2
+              className="text-lg font-semibold"
+              style={{ color: 'var(--mos-danger)' }}
+            >
               Something went wrong
             </h2>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="mt-2 text-sm" style={{ color: 'var(--mos-text)' }}>
               {this.state.error.message}
             </p>
-            <pre className="mt-3 max-h-40 overflow-auto rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
+            <pre
+              className="mt-3 max-h-40 overflow-auto rounded p-2 text-xs"
+              style={{
+                background: 'var(--mos-bg-muted)',
+                color: 'var(--mos-text-muted)',
+              }}
+            >
               {this.state.error.stack}
             </pre>
             <button
               type="button"
               onClick={() => this.setState({ error: null })}
-              className="mt-3 rounded-lg bg-gray-200 px-3 py-1.5 text-sm dark:bg-gray-700"
+              className="mt-3 rounded-lg px-3 py-1.5 text-sm font-medium"
+              style={{
+                background: 'var(--mos-bg-muted)',
+                color: 'var(--mos-text)',
+              }}
             >
               Try again
             </button>

@@ -1,3 +1,6 @@
+// src/pages/Supplements.tsx
+// Stack page: track supplements with cost-per-serving and monthly cost.
+
 import { useEffect, useState } from 'react'
 import { MdScience } from 'react-icons/md'
 import { useLongPressReveal } from '../hooks/useLongPressReveal'
@@ -101,9 +104,9 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
     <div className="relative w-full max-w-xl min-w-0">
       <section className="space-y-3 pb-20">
         {isLoading ? (
-          <p className="text-sm text-[var(--orb-text-muted)]">Loading...</p>
+          <p className="text-sm text-[var(--mos-text-muted)]">Loading...</p>
         ) : supplements.length === 0 ? (
-          <p className="text-sm text-[var(--orb-text-muted)]">
+          <p className="text-sm text-[var(--mos-text-muted)]">
             No supplements yet. Tap + to add one.
           </p>
         ) : (
@@ -115,8 +118,8 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
               return (
                 <li
                   key={s.id}
-                  className={`orb-clickable-card flex min-w-0 overflow-hidden rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] shadow-[var(--orb-shadow)] transition-[border-color] duration-200 ${
-                    isRevealed ? 'border-[var(--orb-border-muted)]' : ''
+                  className={`mos-clickable-card flex min-w-0 overflow-hidden rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] shadow-[var(--mos-shadow)] transition-[border-color] duration-200 ${
+                    isRevealed ? 'border-[var(--mos-border-muted)]' : ''
                   }`}
                 >
                   <div
@@ -149,13 +152,13 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                       if (e.buttons === 1) clearLongPressTimer()
                     }}
                   >
-                    <p className="text-base font-semibold text-[var(--orb-text)]">
+                    <p className="text-base font-semibold text-[var(--mos-text)]">
                       {s.name}
                     </p>
-                    <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--orb-accent)]">
+                    <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--mos-accent)]">
                       ${perMonth.toFixed(2)}/mo
                     </p>
-                    <p className="mt-1 text-xs text-[var(--orb-text-muted)]">
+                    <p className="mt-1 text-xs text-[var(--mos-text-muted)]">
                       ${s.price.toFixed(2)} · {s.servingsPerContainer} servings
                       {s.servingsPerDay !== 1 && s.servingsPerDay !== 1.0
                         ? ` · ${s.servingsPerDay}/day`
@@ -176,7 +179,7 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                         ev.stopPropagation()
                         handleDelete(s.id)
                       }}
-                      className="flex h-full min-w-[72px] items-center justify-center rounded-r-2xl bg-[var(--orb-danger)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--orb-danger-hover)] active:opacity-90"
+                      className="flex h-full min-w-[72px] items-center justify-center rounded-r-2xl bg-[var(--mos-danger)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--mos-danger-hover)] active:opacity-90"
                       aria-label="Delete supplement"
                     >
                       Delete
@@ -191,13 +194,13 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
 
       {isAddOpen && (
         <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/50 px-3 pt-12 pb-0 sm:items-center sm:p-4 sm:pb-0">
-          <div className="orb-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-3 shadow-[var(--orb-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-4">
+          <div className="mos-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-3 shadow-[var(--mos-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-4">
             <div className="mb-2 flex items-center justify-between gap-2 sm:mb-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--orb-bg-muted)]">
-                  <MdScience className="text-[var(--orb-text-muted)]" size={20} />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--mos-bg-muted)]">
+                  <MdScience className="text-[var(--mos-text-muted)]" size={20} />
                 </div>
-                <h2 className="text-sm font-semibold text-[var(--orb-text)]">
+                <h2 className="text-sm font-semibold text-[var(--mos-text)]">
                   Add supplement
                 </h2>
               </div>
@@ -211,13 +214,13 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                   setServingsPerDay('1')
                   setAddError(null)
                 }}
-                className="text-[var(--orb-text-muted)] hover:text-[var(--orb-text)]"
+                className="text-[var(--mos-text-muted)] hover:text-[var(--mos-text)]"
               >
                 Cancel
               </button>
             </div>
             {addError && (
-              <p className="mb-2 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400 sm:mb-3">
+              <p className="mb-2 rounded-xl px-3 py-2 text-xs text-[var(--mos-danger)] sm:mb-3" style={{ background: 'var(--mos-spent-bg)' }}>
                 {addError}
               </p>
             )}
@@ -227,7 +230,7 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
               className="space-y-2 sm:space-y-3"
             >
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                   Name
                 </label>
                 <input
@@ -235,13 +238,13 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Vitamin D3"
-                  className="orb-input h-10 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none ring-0 focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+                  className="mos-input h-10 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none ring-0 focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
                   autoFocus
                 />
               </div>
               <div className="flex gap-3">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                  <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                     Servings per day
                   </label>
                   <input
@@ -252,11 +255,11 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                     value={servingsPerDay}
                     onChange={(e) => setServingsPerDay(e.target.value)}
                     placeholder="1"
-                    className="orb-input h-10 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none ring-0 focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+                    className="mos-input h-10 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none ring-0 focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
                   />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                  <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                     Servings per container
                   </label>
                   <input
@@ -266,16 +269,16 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                     value={servingsPerContainer}
                     onChange={(e) => setServingsPerContainer(e.target.value)}
                     placeholder="30"
-                    className="orb-input h-10 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none ring-0 focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+                    className="mos-input h-10 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none ring-0 focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                   Price
                 </label>
-                <div className="mt-1 flex items-baseline rounded-xl border border-[var(--orb-border)] bg-white shadow-sm dark:bg-[var(--orb-bg)]">
-                  <span className="orb-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--orb-text)]">
+                <div className="mt-1 flex items-baseline rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] shadow-[var(--mos-shadow)]">
+                  <span className="mos-amount-input py-4 pl-4 font-semibold tabular-nums text-[var(--mos-text)]">
                     $
                   </span>
                   <input
@@ -286,7 +289,7 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="0"
-                    className="orb-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--orb-text)] outline-none focus:ring-0"
+                    className="mos-amount-input w-full min-w-0 border-0 bg-transparent py-4 pr-4 pl-1 font-semibold tabular-nums text-[var(--mos-text)] outline-none focus:ring-0"
                   />
                 </div>
               </div>
@@ -300,7 +303,7 @@ export default function Supplements({ isAddOpen, onCloseAdd }: Props) {
                     Number(price) < 0 ||
                     Number(servingsPerContainer) < 1
                   }
-                  className="w-full rounded-xl bg-[var(--orb-accent)] py-3 text-sm font-semibold text-[var(--orb-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
+                  className="w-full rounded-xl bg-[var(--mos-accent)] py-3 text-sm font-semibold text-[var(--mos-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
                 >
                   Save
                 </button>

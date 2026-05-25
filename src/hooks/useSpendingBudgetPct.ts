@@ -1,6 +1,9 @@
+// src/hooks/useSpendingBudgetPct.ts
+// Hook for the spending-budget percentage (% of income); persisted in localStorage.
+
 import { useCallback, useState } from 'react'
 
-const STORAGE_KEY = 'yos:spendingBudgetPct'
+const STORAGE_KEY = 'mos:spendingBudgetPct'
 const DEFAULT_PCT = 75
 const MIN = 25
 const MAX = 100

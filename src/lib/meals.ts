@@ -1,4 +1,7 @@
-const STORAGE_KEY = 'yOS_meals'
+// src/lib/meals.ts
+// Meal CRUD and cost calculations; persisted in localStorage.
+
+const STORAGE_KEY = 'mOS_meals'
 
 export type MealIngredient = {
   id: string
@@ -23,7 +26,9 @@ function loadFromStorage(): Meal[] {
     if (!raw) return []
     const parsed = JSON.parse(raw) as Meal[]
     return Array.isArray(parsed) ? parsed : []
-  } catch {
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load meals from localStorage', err)
     return []
   }
 }

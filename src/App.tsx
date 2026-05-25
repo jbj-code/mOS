@@ -1,3 +1,6 @@
+// src/App.tsx
+// Root app shell: password gate, view routing, layout modes, and page headers.
+
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
@@ -15,12 +18,12 @@ import Supplements from './pages/Supplements'
 import './style.css'
 import type { View } from './nav'
 import { NavBar } from './components/NavBar'
-import { PasswordGate, getIsUnlocked } from './components/PasswordGate'
+import { PasswordGate, getIsUnlocked, isPasswordEnabled } from './components/PasswordGate'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 const PAGE_CONFIG: Record<View, { title: string; subtitle: string }> = {
   home: {
-    title: 'yOS',
+    title: 'mOS',
     subtitle: '',
   },
   meal: {
@@ -41,27 +44,27 @@ export default function App() {
   const [mealAddOpen, setMealAddOpen] = useState(false)
   const [supplementAddOpen, setSupplementAddOpen] = useState(false)
 
-  if (!unlocked) {
-    return <PasswordGate onUnlock={() => setUnlocked(true)} />
-  }
-
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [view])
+
+  if (isPasswordEnabled() && !unlocked) {
+    return <PasswordGate onUnlock={() => setUnlocked(true)} />
+  }
 
   const config = PAGE_CONFIG[view]
   const viewModeToggle = (
     <button
       type="button"
       onClick={toggleViewMode}
-      className="orb-page-header-action"
+      className="mos-page-header-action"
       aria-label={viewMode === 'mobile' ? 'Switch to desktop view' : 'Switch to mobile view'}
       title={viewMode === 'mobile' ? 'Desktop view' : 'Mobile view'}
     >
       {viewMode === 'mobile' ? (
-        <MdComputer className="orb-icon" size={24} />
+        <MdComputer className="mos-icon" size={24} />
       ) : (
-        <MdPhoneIphone className="orb-icon" size={24} />
+        <MdPhoneIphone className="mos-icon" size={24} />
       )}
     </button>
   )
@@ -71,13 +74,13 @@ export default function App() {
           <button
             type="button"
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            className="orb-page-header-action"
+            className="mos-page-header-action"
             aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
           >
             {theme === 'light' ? (
-              <MdDarkMode className="orb-icon" size={24} />
+              <MdDarkMode className="mos-icon" size={24} />
             ) : (
-              <MdLightMode className="orb-icon" size={24} />
+              <MdLightMode className="mos-icon" size={24} />
             )}
           </button>
         )
@@ -86,10 +89,10 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setMealAddOpen(true)}
-                className="orb-page-header-action"
+                className="mos-page-header-action"
                 aria-label="Add meal"
               >
-                <MdAddCircle className="orb-icon" size={24} />
+                <MdAddCircle className="mos-icon" size={24} />
               </button>
             )
           : view === 'supplements'
@@ -97,10 +100,10 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setSupplementAddOpen(true)}
-                  className="orb-page-header-action"
+                  className="mos-page-header-action"
                   aria-label="Add supplement"
                 >
-                  <MdAddCircle className="orb-icon" size={24} />
+                  <MdAddCircle className="mos-icon" size={24} />
                 </button>
               )
             : null
@@ -115,20 +118,20 @@ export default function App() {
   const mainContent = (
     <>
       <header
-        className={`orb-page-header ${isHome ? 'orb-page-header--home' : ''}`}
+        className={`mos-page-header ${isHome ? 'mos-page-header--home' : ''}`}
       >
-        <div className="orb-page-header-inner">
+        <div className="mos-page-header-inner">
           <h1
-            className={`orb-page-header-title ${isHome ? 'orb-page-header-title--bold' : ''}`}
+            className={`mos-page-header-title ${isHome ? 'mos-page-header-title--bold' : ''}`}
           >
             {config.title}
           </h1>
           {config.subtitle ? (
-            <p className="orb-page-header-subtitle">{config.subtitle}</p>
+            <p className="mos-page-header-subtitle">{config.subtitle}</p>
           ) : null}
         </div>
         {(view === 'home' && viewModeToggle) || pageAction ? (
-          <div className="orb-page-header-right flex items-center gap-1">
+          <div className="mos-page-header-right flex items-center gap-1">
             {view === 'home' && viewModeToggle}
             {pageAction}
           </div>
@@ -156,14 +159,14 @@ export default function App() {
       {viewMode === 'desktop' ? (
         <div
           className="min-h-screen flex"
-          style={{ background: 'var(--orb-bg, #f1f5f9)' }}
+          style={{ background: 'var(--mos-bg)' }}
         >
           <NavBar
             viewMode="desktop"
             view={view}
             onChangeView={setViewAndClose}
           />
-          <main className="orb-scrollbar-hide flex-1 min-w-0 overflow-auto">
+          <main className="mos-scrollbar-hide flex-1 min-w-0 overflow-auto">
             <div className="mx-auto max-w-2xl px-6 py-6">
               {mainContent}
             </div>
@@ -172,7 +175,7 @@ export default function App() {
       ) : (
         <div
           className="min-h-screen flex justify-center px-3 py-4 sm:px-4 sm:py-6"
-          style={{ background: 'var(--orb-bg, #f1f5f9)' }}
+          style={{ background: 'var(--mos-bg)' }}
         >
           <div className="w-full max-w-xl min-w-0 pb-20">
             {mainContent}

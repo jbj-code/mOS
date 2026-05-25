@@ -1,3 +1,6 @@
+// src/lib/budget.ts
+// Finance entries: Supabase CRUD, caching, totals, and date/month helpers.
+
 import { supabase } from '../supabaseClient'
 
 export type ExpenseKind = 'expense' | 'income'
@@ -32,8 +35,11 @@ function mapRowToExpense(row: EntryRow): Expense {
   }
 }
 
-/** In-memory cache to avoid repeated Supabase reads (rate limits). Invalidated on write/delete. */
-let entriesCache: Expense[] | null = null
+/** In-memory cache keyed by month (YYYY-MM) to avoid repeated Supabase reads. */
+const entriesCache = new Map<string, Expense[]>()
+
+/** Safety cap per month — personal use; prevents unbounded result sets. */
+const ENTRIES_PAGE_LIMIT = 500
 
 export const DEFAULT_BUDGET_CATEGORIES: string[] = [
   'Groceries',
@@ -94,14 +100,33 @@ export function filterByMonth(expenses: Expense[], monthKey: string): Expense[] 
   return expenses.filter((e) => e.date.startsWith(monthKey))
 }
 
-export async function loadExpenses(): Promise<Expense[]> {
-  if (entriesCache !== null) return entriesCache
+/** First and last date (inclusive) for a YYYY-MM month key. */
+export function getMonthDateRange(monthKey: string): { start: string; end: string } {
+  const [y, m] = monthKey.split('-').map(Number)
+  const lastDay = new Date(y, m, 0).getDate()
+  return {
+    start: `${monthKey}-01`,
+    end: `${monthKey}-${String(lastDay).padStart(2, '0')}`,
+  }
+}
 
+function monthKeyFromDate(date: string): string {
+  return date.slice(0, 7)
+}
+
+export async function loadExpensesForMonth(monthKey: string): Promise<Expense[]> {
+  const cached = entriesCache.get(monthKey)
+  if (cached !== undefined) return cached
+
+  const { start, end } = getMonthDateRange(monthKey)
   const { data, error } = await supabase
     .from('entries')
     .select('id, label, category, amount, date, kind')
+    .gte('date', start)
+    .lte('date', end)
     .order('date', { ascending: false })
     .order('created_at', { ascending: false })
+    .limit(ENTRIES_PAGE_LIMIT)
 
   if (error) {
     // eslint-disable-next-line no-console
@@ -110,13 +135,17 @@ export async function loadExpenses(): Promise<Expense[]> {
   }
 
   const entries = (data ?? []).map((row: EntryRow) => mapRowToExpense(row))
-  entriesCache = entries
+  entriesCache.set(monthKey, entries)
   return entries
 }
 
+export type CreateEntryResult =
+  | { data: Expense; error: null }
+  | { data: null; error: string }
+
 export async function createEntry(
   input: Omit<Expense, 'id'>,
-): Promise<Expense | null> {
+): Promise<CreateEntryResult> {
   const { data, error } = await supabase
     .from('entries')
     .insert({
@@ -132,22 +161,31 @@ export async function createEntry(
   if (error) {
     // eslint-disable-next-line no-console
     console.error('Failed to create entry', error)
-    return null
+    return {
+      data: null,
+      error: error.message || 'Could not save entry',
+    }
   }
 
   const entry = mapRowToExpense(data as EntryRow)
-  if (entriesCache !== null) entriesCache = [entry, ...entriesCache]
-  return entry
+  const key = monthKeyFromDate(entry.date)
+  const cached = entriesCache.get(key)
+  if (cached !== undefined) entriesCache.set(key, [entry, ...cached])
+  return { data: entry, error: null }
 }
 
-export async function deleteEntry(id: string): Promise<boolean> {
+export async function deleteEntry(id: string, date: string): Promise<boolean> {
   const { error } = await supabase.from('entries').delete().eq('id', id)
   if (error) {
     // eslint-disable-next-line no-console
     console.error('Failed to delete entry', error)
     return false
   }
-  if (entriesCache !== null) entriesCache = entriesCache.filter((e) => e.id !== id)
+  const key = monthKeyFromDate(date)
+  const cached = entriesCache.get(key)
+  if (cached !== undefined) {
+    entriesCache.set(key, cached.filter((e) => e.id !== id))
+  }
   return true
 }
 

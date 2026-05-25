@@ -1,7 +1,13 @@
+/* src/style.css — Global styles, layout utilities, and mOS component classes. */
+
 @import 'tailwindcss';
 
 @layer base {
   :root {
+    color-scheme: dark;
+  }
+
+  [data-theme='light'] {
     color-scheme: light;
   }
 
@@ -18,7 +24,14 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
       ui-sans-serif, sans-serif;
     overflow-x: hidden;
-    background: var(--orb-bg, #f1f5f9);
+    background: var(--mos-bg);
+    color: var(--mos-text);
+  }
+
+  [data-theme='dark'] body {
+    background:
+      radial-gradient(ellipse 120% 70% at 50% -15%, #152922 0%, transparent 55%),
+      var(--mos-bg);
   }
 }
 
@@ -26,37 +39,35 @@
 button,
 [role='button'],
 a,
-.orb-clickable {
+.mos-clickable {
   cursor: pointer;
 }
 
-/* Hoverable card: outline in primary color, shadow, slight scale (desktop only) */
+/* Hoverable card: emerald outline, soft glow, slight scale (desktop only) */
 @media (hover: hover) {
-  .orb-clickable-card {
+  .mos-clickable-card {
     cursor: pointer;
     transition:
       transform 0.2s ease-out,
       box-shadow 0.2s ease-out,
       border-color 0.2s ease-out;
+    box-shadow: var(--mos-card-glow);
   }
-  .orb-clickable-card:hover {
+  .mos-clickable-card:hover {
     transform: scale(1.02);
-    border-color: var(--orb-accent);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1), 0 0 0 2px var(--orb-accent);
-  }
-  [data-theme='dark'] .orb-clickable-card:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--orb-accent);
+    border-color: var(--mos-accent);
+    box-shadow: var(--mos-card-glow), var(--mos-accent-glow);
   }
 }
 
 /* Responsive standard: mobile-first, sm (640px) = desktop. Touch targets ≥ 44px. */
-.orb-touch-target {
+.mos-touch-target {
   min-height: 44px;
   min-width: 44px;
 }
 
 /* Nav bar: fixed to bottom, same width as body so it doesn't shift when scrollbar appears. */
-.orb-nav-bar {
+.mos-nav-bar {
   position: fixed;
   left: 0;
   right: 0;
@@ -66,28 +77,29 @@ a,
   padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 50;
 }
-.orb-nav-bar-inner {
+.mos-nav-bar-inner {
   border-radius: 1.5rem 1.5rem 0 0;
   border-bottom: none;
+  box-shadow: var(--mos-shadow-lg), var(--mos-card-glow);
 }
 
 /* Desktop sidebar */
-.orb-sidebar {
+.mos-sidebar {
   width: 12rem;
   flex-shrink: 0;
-  border-right: 1px solid var(--orb-border);
-  background: var(--orb-bg-elevated);
+  border-right: 1px solid var(--mos-border);
+  background: var(--mos-bg-elevated);
 }
-.orb-sidebar-nav {
+.mos-sidebar-nav {
   padding-top: 0.5rem;
 }
-.orb-sidebar-item:hover {
-  background: var(--orb-bg-muted);
+.mos-sidebar-item:hover {
+  background: var(--mos-bg-muted);
 }
 
 /* Reusable page header: title + optional subtitle left, optional action right.
    Same positioning on every page: title and action align to top. */
-.orb-page-header {
+.mos-page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -95,15 +107,15 @@ a,
   margin-bottom: 1rem;
 }
 @media (min-width: 640px) {
-  .orb-page-header {
+  .mos-page-header {
     margin-bottom: 1.5rem;
   }
 }
-.orb-page-header-inner {
+.mos-page-header-inner {
   flex: 1 1 auto;
   min-width: 0;
 }
-.orb-page-header-title {
+.mos-page-header-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -111,70 +123,70 @@ a,
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.5;
-  color: var(--orb-text);
+  color: var(--mos-text);
 }
-.orb-page-header-title--bold {
+.mos-page-header-title--bold {
   font-weight: 700;
 }
 @media (min-width: 640px) {
-  .orb-page-header-title {
+  .mos-page-header-title {
     font-size: 1.25rem;
   }
 }
-/* Home: larger yOS title and less space above date */
-.orb-page-header--home .orb-page-header-title {
+/* Home: larger mOS title and less space above date */
+.mos-page-header--home .mos-page-header-title {
   font-size: 1.5rem;
 }
-.orb-page-header--home {
+.mos-page-header--home {
   margin-bottom: 0.5rem;
 }
 @media (min-width: 640px) {
-  .orb-page-header--home .orb-page-header-title {
+  .mos-page-header--home .mos-page-header-title {
     font-size: 1.75rem;
   }
-  .orb-page-header--home {
+  .mos-page-header--home {
     margin-bottom: 0.75rem;
   }
 }
-.orb-page-header-subtitle {
+.mos-page-header-subtitle {
   font-size: 0.75rem;
-  color: var(--orb-text-muted);
+  color: var(--mos-text-muted);
   margin-top: 0.125rem;
 }
-.orb-page-header-right {
+.mos-page-header-right {
   flex-shrink: 0;
   padding-top: 0.125rem; /* align icon with title cap height */
 }
-.orb-page-header-action {
+.mos-page-header-action {
   border-radius: 9999px;
   padding: 0.5rem;
-  color: var(--orb-text-muted);
+  color: var(--mos-text-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.orb-page-header-action:hover {
-  background: var(--orb-bg-muted);
-  color: var(--orb-text);
+.mos-page-header-action:hover {
+  background: var(--mos-bg-muted);
+  color: var(--mos-text);
 }
 /* Header action icons: same size everywhere (theme toggle, add, etc.) */
-.orb-page-header-action .orb-icon {
+.mos-page-header-action .mos-icon {
   width: 1.5rem;
   height: 1.5rem;
   flex-shrink: 0;
 }
 /* Home header: bell-style icons (outlined, subtle circular border) */
-.orb-page-header--home .orb-page-header-action {
-  border: 1px solid var(--orb-border);
-  background: var(--orb-bg-elevated);
+.mos-page-header--home .mos-page-header-action {
+  border: 1px solid var(--mos-border);
+  background: var(--mos-bg-elevated);
 }
-.orb-page-header--home .orb-page-header-action:hover {
-  background: var(--orb-bg-muted);
-  border-color: var(--orb-border-muted);
+.mos-page-header--home .mos-page-header-action:hover {
+  background: var(--mos-bg-muted);
+  border-color: var(--mos-border-muted);
 }
 
 /* Modal panel: mobile bottom-sheet style, scrollable, not too tall */
-.orb-modal-panel {
+.mos-modal-panel {
   max-height: 88dvh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -182,40 +194,40 @@ a,
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.orb-modal-panel::-webkit-scrollbar {
+.mos-modal-panel::-webkit-scrollbar {
   display: none;
 }
 
 /* Hide scrollbar but keep scrolling (other scrollable areas) */
-.orb-scrollbar-hide {
+.mos-scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.orb-scrollbar-hide::-webkit-scrollbar {
+.mos-scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 @media (min-width: 640px) {
-  .orb-modal-panel {
+  .mos-modal-panel {
     padding-bottom: 1rem;
   }
 }
 
 /* Inputs: 16px font on mobile to prevent iOS zoom on focus */
-.orb-input {
+.mos-input {
   font-size: 16px;
 }
 @media (min-width: 640px) {
-  .orb-input {
+  .mos-input {
     font-size: 0.875rem;
   }
 }
 
-/* Amount field in add income/expense: large, prominent (overrides .orb-input) */
-.orb-amount-input {
+/* Amount field in add income/expense: large, prominent (overrides .mos-input) */
+.mos-amount-input {
   font-size: 2.5rem !important;
 }
 @media (min-width: 640px) {
-  .orb-amount-input {
+  .mos-amount-input {
     font-size: 3.25rem !important;
   }
 }

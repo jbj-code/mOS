@@ -1,3 +1,6 @@
+// src/pages/Meals.tsx
+// Meals page: build meals from ingredients with per-meal cost tracking.
+
 import { useEffect, useState } from 'react'
 import { MdRestaurant, MdAdd, MdDelete } from 'react-icons/md'
 import { useLongPressReveal } from '../hooks/useLongPressReveal'
@@ -112,9 +115,9 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
     <div className="relative w-full max-w-xl min-w-0">
       <section className="space-y-3 pb-20">
         {isLoading ? (
-          <p className="text-sm text-[var(--orb-text-muted)]">Loading...</p>
+          <p className="text-sm text-[var(--mos-text-muted)]">Loading...</p>
         ) : meals.length === 0 ? (
-          <p className="text-sm text-[var(--orb-text-muted)]">
+          <p className="text-sm text-[var(--mos-text-muted)]">
             No meals yet. Tap + to add one.
           </p>
         ) : (
@@ -125,8 +128,8 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
               return (
                 <li
                   key={meal.id}
-                  className={`orb-clickable-card flex min-w-0 overflow-hidden rounded-2xl border border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] shadow-[var(--orb-shadow)] transition-[border-color] duration-200 ${
-                    isRevealed ? 'border-[var(--orb-border-muted)]' : ''
+                  className={`mos-clickable-card flex min-w-0 overflow-hidden rounded-2xl border border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] shadow-[var(--mos-shadow)] transition-[border-color] duration-200 ${
+                    isRevealed ? 'border-[var(--mos-border-muted)]' : ''
                   }`}
                 >
                   <div
@@ -148,13 +151,13 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                       if (e.buttons === 1) clearLongPressTimer()
                     }}
                   >
-                    <p className="text-base font-semibold text-[var(--orb-text)]">
+                    <p className="text-base font-semibold text-[var(--mos-text)]">
                       {meal.name}
                     </p>
-                    <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--orb-accent)]">
+                    <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--mos-accent)]">
                       ${cost.toFixed(2)}
                     </p>
-                    <p className="mt-0.5 text-xs text-[var(--orb-text-muted)]">
+                    <p className="mt-0.5 text-xs text-[var(--mos-text-muted)]">
                       {meal.ingredients.length} ingredient
                       {meal.ingredients.length !== 1 ? 's' : ''}
                     </p>
@@ -172,7 +175,7 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                         ev.stopPropagation()
                         handleDelete(meal.id)
                       }}
-                      className="flex h-full min-w-[72px] items-center justify-center rounded-r-2xl bg-[var(--orb-danger)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--orb-danger-hover)] active:opacity-90"
+                      className="flex h-full min-w-[72px] items-center justify-center rounded-r-2xl bg-[var(--mos-danger)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--mos-danger-hover)] active:opacity-90"
                       aria-label="Delete meal"
                     >
                       Delete
@@ -187,13 +190,13 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
 
       {isAddOpen && (
         <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/50 px-3 pt-12 pb-0 sm:items-center sm:p-4 sm:pb-0">
-          <div className="orb-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--orb-border)] bg-[var(--orb-bg-elevated)] p-3 shadow-[var(--orb-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-4">
+          <div className="mos-modal-panel w-full max-w-md rounded-t-3xl border border-b-0 border-[var(--mos-border)] bg-[var(--mos-bg-elevated)] p-3 shadow-[var(--mos-shadow-lg)] sm:rounded-3xl sm:border-b sm:p-4">
             <div className="mb-2 flex items-center justify-between gap-2 sm:mb-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--orb-bg-muted)]">
-                  <MdRestaurant className="text-[var(--orb-text-muted)]" size={20} />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--mos-bg-muted)]">
+                  <MdRestaurant className="text-[var(--mos-text-muted)]" size={20} />
                 </div>
-                <h2 className="text-sm font-semibold text-[var(--orb-text)]">
+                <h2 className="text-sm font-semibold text-[var(--mos-text)]">
                   Add meal
                 </h2>
               </div>
@@ -205,19 +208,19 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                   setIngredients([{ key: '0', name: '', price: '', servingSize: '' }])
                   setAddError(null)
                 }}
-                className="text-[var(--orb-text-muted)] hover:text-[var(--orb-text)]"
+                className="text-[var(--mos-text-muted)] hover:text-[var(--mos-text)]"
               >
                 Cancel
               </button>
             </div>
             {addError && (
-              <p className="mb-2 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-600 dark:text-red-400 sm:mb-3">
+              <p className="mb-2 rounded-xl px-3 py-2 text-xs text-[var(--mos-danger)] sm:mb-3" style={{ background: 'var(--mos-spent-bg)' }}>
                 {addError}
               </p>
             )}
             <form onSubmit={handleAdd} className="space-y-2 sm:space-y-3">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                   Meal name
                 </label>
                 <input
@@ -225,19 +228,19 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                   value={mealName}
                   onChange={(e) => setMealName(e.target.value)}
                   placeholder="e.g. Chicken stir fry"
-                  className="orb-input h-10 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] px-3 text-[var(--orb-text)] outline-none ring-0 focus:border-[var(--orb-accent)] focus:ring-2 focus:ring-[var(--orb-accent)]/30"
+                  className="mos-input h-10 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] px-3 text-[var(--mos-text)] outline-none ring-0 focus:border-[var(--mos-accent)] focus:ring-2 focus:ring-[var(--mos-accent)]/30"
                   autoFocus
                 />
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                <label className="text-xs font-medium text-[var(--orb-text-muted)]">
+                <label className="text-xs font-medium text-[var(--mos-text-muted)]">
                   Ingredients
                 </label>
                 <button
                   type="button"
                   onClick={addIngredientRow}
-                  className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-[var(--orb-accent)] hover:bg-[var(--orb-accent)]/10"
+                  className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-[var(--mos-accent)] hover:bg-[var(--mos-accent)]/10"
                 >
                   <MdAdd size={16} />
                   Add ingredient
@@ -248,7 +251,7 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                 {ingredients.map((row) => (
                   <div
                     key={row.key}
-                    className="flex flex-wrap items-end gap-2 rounded-xl border border-[var(--orb-border)] bg-[var(--orb-bg)] p-2 sm:flex-nowrap"
+                    className="flex flex-wrap items-end gap-2 rounded-xl border border-[var(--mos-border)] bg-[var(--mos-bg)] p-2 sm:flex-nowrap"
                   >
                     <div className="min-w-0 flex-1">
                       <input
@@ -256,11 +259,11 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                         value={row.name}
                         onChange={(e) => updateRow(row.key, 'name', e.target.value)}
                         placeholder="Name"
-                        className="orb-input h-9 w-full rounded-lg border border-[var(--orb-border)] bg-transparent px-2 text-sm text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)]"
+                        className="mos-input h-9 w-full rounded-lg border border-[var(--mos-border)] bg-transparent px-2 text-sm text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)]"
                       />
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-sm text-[var(--orb-text-muted)]">$</span>
+                      <span className="text-sm text-[var(--mos-text-muted)]">$</span>
                       <input
                         type="number"
                         inputMode="decimal"
@@ -269,7 +272,7 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                         value={row.price}
                         onChange={(e) => updateRow(row.key, 'price', e.target.value)}
                         placeholder="0"
-                        className="orb-input w-20 rounded-lg border border-[var(--orb-border)] bg-transparent px-2 py-1.5 text-sm tabular-nums text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)]"
+                        className="mos-input w-20 rounded-lg border border-[var(--mos-border)] bg-transparent px-2 py-1.5 text-sm tabular-nums text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)]"
                       />
                     </div>
                     <div className="min-w-0 flex-1 sm:max-w-[120px]">
@@ -280,14 +283,14 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                           updateRow(row.key, 'servingSize', e.target.value)
                         }
                         placeholder="e.g. 1 cup"
-                        className="orb-input h-9 w-full rounded-lg border border-[var(--orb-border)] bg-transparent px-2 text-sm text-[var(--orb-text)] outline-none focus:border-[var(--orb-accent)]"
+                        className="mos-input h-9 w-full rounded-lg border border-[var(--mos-border)] bg-transparent px-2 text-sm text-[var(--mos-text)] outline-none focus:border-[var(--mos-accent)]"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => removeIngredientRow(row.key)}
                       disabled={ingredients.length <= 1}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--orb-text-muted)] hover:bg-[var(--orb-bg-muted)] hover:text-[var(--orb-danger)] disabled:opacity-40"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--mos-text-muted)] hover:bg-[var(--mos-bg-muted)] hover:text-[var(--mos-danger)] disabled:opacity-40"
                       aria-label="Remove ingredient"
                     >
                       <MdDelete size={18} />
@@ -305,7 +308,7 @@ export default function Meals({ isAddOpen, onCloseAdd }: Props) {
                       (r) => !r.name.trim() && (Number(r.price) || 0) <= 0,
                     )
                   }
-                  className="w-full rounded-xl bg-[var(--orb-accent)] py-3 text-sm font-semibold text-[var(--orb-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
+                  className="w-full rounded-xl bg-[var(--mos-accent)] py-3 text-sm font-semibold text-[var(--mos-accent-contrast)] shadow transition hover:opacity-90 active:opacity-95 disabled:opacity-50"
                 >
                   Save
                 </button>

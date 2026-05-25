@@ -1,3 +1,6 @@
+// src/hooks/useLongPressReveal.ts
+// Long-press gesture hook to reveal destructive actions (e.g. delete buttons).
+
 import { useEffect, useRef, useState } from 'react'
 
 const LONG_PRESS_MS = 450

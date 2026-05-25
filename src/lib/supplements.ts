@@ -1,3 +1,6 @@
+// src/lib/supplements.ts
+// Supplement CRUD and cost-per-serving calculations via Supabase.
+
 import { supabase } from '../supabaseClient'
 
 export type Supplement = {
@@ -35,6 +38,8 @@ export function monthlyCost(s: Supplement): number {
   return costPerServing(s) * s.servingsPerDay * 30
 }
 
+const SUPPLEMENTS_LIMIT = 100
+
 let supplementsCache: Supplement[] | null = null
 
 export async function loadSupplements(): Promise<Supplement[]> {
@@ -44,6 +49,7 @@ export async function loadSupplements(): Promise<Supplement[]> {
     .from('supplements')
     .select('id, name, price, servings_per_container, servings_per_day')
     .order('name', { ascending: true })
+    .limit(SUPPLEMENTS_LIMIT)
 
   if (error) {
     // eslint-disable-next-line no-console

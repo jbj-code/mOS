@@ -1,3 +1,6 @@
+// src/lib/categoryIcons.tsx
+// Maps expense/income category names to icons and chart segment colors.
+
 import type { IconType } from 'react-icons'
 import {
   MdShoppingBasket,
@@ -14,30 +17,25 @@ import {
   MdReply,
   MdSavings,
 } from 'react-icons/md'
+import { CATEGORY_COLOR_FALLBACK, CATEGORY_COLORS } from '../theme'
 
-const CATEGORY_CONFIG: Record<
-  string,
-  { icon: IconType; color: string }
-> = {
-  /* Expense categories */
-  Groceries: { icon: MdShoppingBasket, color: '#059669' },
-  Transport: { icon: MdDirectionsCar, color: '#2563eb' },
-  'Food & Dining': { icon: MdRestaurant, color: '#ea580c' },
-  Housing: { icon: MdHome, color: '#7c3aed' },
-  Subscriptions: { icon: MdSubscriptions, color: '#db2777' },
-  Health: { icon: MdLocalHospital, color: '#dc2626' },
-  Fun: { icon: MdLocalBar, color: '#ca8a04' },
-  Other: { icon: MdCategory, color: '#64748b' },
-  /* Income categories */
-  Salary: { icon: MdPayments, color: '#059669' },
-  'Item Sale': { icon: MdSell, color: '#2563eb' },
-  'Digital Sale': { icon: MdSmartphone, color: '#7c3aed' },
-  Refund: { icon: MdReply, color: '#0891b2' },
-  Investment: { icon: MdSavings, color: '#ca8a04' },
+const CATEGORY_CONFIG: Record<string, { icon: IconType; color: string }> = {
+  Groceries: { icon: MdShoppingBasket, color: CATEGORY_COLORS.Groceries },
+  Transport: { icon: MdDirectionsCar, color: CATEGORY_COLORS.Transport },
+  'Food & Dining': { icon: MdRestaurant, color: CATEGORY_COLORS['Food & Dining'] },
+  Housing: { icon: MdHome, color: CATEGORY_COLORS.Housing },
+  Subscriptions: { icon: MdSubscriptions, color: CATEGORY_COLORS.Subscriptions },
+  Health: { icon: MdLocalHospital, color: CATEGORY_COLORS.Health },
+  Fun: { icon: MdLocalBar, color: CATEGORY_COLORS.Fun },
+  Other: { icon: MdCategory, color: CATEGORY_COLORS.Other },
+  Salary: { icon: MdPayments, color: CATEGORY_COLORS.Salary },
+  'Item Sale': { icon: MdSell, color: CATEGORY_COLORS['Item Sale'] },
+  'Digital Sale': { icon: MdSmartphone, color: CATEGORY_COLORS['Digital Sale'] },
+  Refund: { icon: MdReply, color: CATEGORY_COLORS.Refund },
+  Investment: { icon: MdSavings, color: CATEGORY_COLORS.Investment },
 }
 
-/** Default icon/color for unknown categories (e.g. custom legacy data). */
-const FALLBACK = { icon: MdCategory, color: '#64748b' }
+const FALLBACK = { icon: MdCategory, color: CATEGORY_COLOR_FALLBACK }
 
 export function getCategoryIcon(category: string): IconType {
   const key = (category || 'Other').trim()

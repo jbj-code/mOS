@@ -1,8 +1,11 @@
+// src/hooks/useViewMode.ts
+// Hook to toggle mobile vs desktop layout; persisted in localStorage.
+
 import { useCallback, useState } from 'react'
 
 export type ViewMode = 'mobile' | 'desktop'
 
-const STORAGE_KEY = 'yos:viewMode'
+const STORAGE_KEY = 'mos:viewMode'
 
 function getStoredViewMode(): ViewMode {
   if (typeof window === 'undefined') return 'mobile'

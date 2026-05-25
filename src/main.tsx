@@ -1,3 +1,6 @@
+// src/main.tsx
+// React entry point: applies stored theme and mounts the app root.
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { applyTheme, getStoredTheme } from './theme'
