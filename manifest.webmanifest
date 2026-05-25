@@ -1,0 +1,21 @@
+{
+  "name": "mOS",
+  "short_name": "mOS",
+  "start_url": "/mOS/",
+  "scope": "/mOS/",
+  "display": "standalone",
+  "background_color": "#050A09",
+  "theme_color": "#050A09",
+  "icons": [
+    {
+      "src": "icons/mos-icon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "icons/mos-icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
